@@ -1,63 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Event Registration</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: linear-gradient(to bottom, #1e3c72, #2a5298);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: white;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conferinta tineret BCB Maranata “Influente” - 14 Martie 2026</title>
 
-        .container {
-            background: white;
-            color: black;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-        }
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #2a5298;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-        }
+    /* Splash screen */
+    #splash {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: linear-gradient(to bottom, #1e3c72, #2a5298);
+      color: white;
+      position: relative;
+      opacity: 1;
+      transition: opacity 1s ease; /* fade transition */
+    }
 
-        button:hover {
-            background: #1e3c72;
-        }
-    </style>
+    #splash h1 {
+      font-size: 3rem;
+      text-align: center;
+    }
+
+    /* Footer message */
+    #footer {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    /* Homepage (hidden initially) */
+    #homepage {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #homepage h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    #homepage form input, #homepage form button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      font-size: 1rem;
+    }
+
+    #homepage form button {
+      background-color: #2a5298;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #homepage form button:hover {
+      background-color: #1e3c72;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
+  <!-- Splash Screen -->
+  <div id="splash">
+    <h1>Welcome to Our Event</h1>
+    <div id="footer">Programmed by David Andronic and Elias Chis</div>
+  </div>
+
+  <!-- Homepage / Registration Form -->
+  <div id="homepage">
     <h2>Register for the Event</h2>
     <form action="/register" method="POST">
-        <input type="text" name="name" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email Address" required>
-        <input type="text" name="phone" placeholder="Phone Number" required>
-        <button type="submit">Register</button>
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+      <input type="text" name="phone" placeholder="Phone Number" required>
+      <button type="submit">Register</button>
     </form>
-</div>
+  </div>
+
+  <script>
+    // Wait 3 seconds, then fade splash out
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      splash.style.opacity = 0; // start fade
+
+      // After 1s (matching CSS transition), hide splash and show homepage
+      setTimeout(() => {
+        splash.style.display = 'none';
+        document.getElementById('homepage').style.display = 'block';
+      }, 1000);
+    }, 3000);
+  </script>
 
 </body>
 </html>
