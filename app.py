@@ -184,7 +184,14 @@ def admin_dashboard():
         return redirect(url_for("admin_login"))
 
     participants = Participant.query.all()
-    return render_template("admin_dashboard.html", participants=participants, teams=TEAMS)
+    total_count = Participant.query.count()
+
+    return render_template(
+        "admin_dashboard.html",
+        participants=participants,
+        teams=TEAMS,
+        total_count=total_count
+    )
 
 # -----------------------
 # Admin Logout

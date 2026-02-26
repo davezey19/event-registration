@@ -12,26 +12,96 @@ color:white;
 font-family:Arial;
 padding:20px;
 }
+
+/* Header */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.header h1{
+margin:0;
+}
+
+/* Stats Box */
+.stats-container{
+display:flex;
+justify-content:flex-end;
+margin-bottom:20px;
+}
+
+.stat-box{
+background:rgba(255,255,255,0.15);
+padding:15px 25px;
+border-radius:12px;
+text-align:center;
+min-width:180px;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+
+.stat-box h3{
+margin:0;
+font-size:16px;
+opacity:0.8;
+}
+
+.stat-box p{
+font-size:32px;
+margin:5px 0 0 0;
+font-weight:bold;
+}
+
+/* Table */
 table{
 width:100%;
 border-collapse:collapse;
 background:rgba(255,255,255,0.1);
+overflow:hidden;
+border-radius:12px;
 }
+
 th,td{
 padding:10px;
 border:1px solid rgba(255,255,255,0.3);
 text-align:left;
 }
+
 th{
 background:#2a5298;
 }
-a{color:gold;}
+
+tr:nth-child(even){
+background:rgba(255,255,255,0.05);
+}
+
+a{
+color:gold;
+text-decoration:none;
+}
+
+.logout{
+margin-top:20px;
+display:inline-block;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Registered Participants</h1>
+<div class="header">
+<h1>Admin Dashboard</h1>
+<a href="{{ url_for('admin_logout') }}">Logout</a>
+</div>
+
+<div class="stats-container">
+    <div class="stat-box">
+        <h3>Total Participants</h3>
+        <p>{{ total_count }}</p>
+    </div>
+</div>
 
 <table>
 <tr>
@@ -48,16 +118,13 @@ a{color:gold;}
 <td>{{ p.email }}</td>
 <td>{{ p.phone }}</td>
 <td>{{ p.church }}</td>
-<td style="background-color: {{ teams[p.team] }}; color:white;">
+<td style="background-color: {{ teams[p.team] }}; color:white; font-weight:bold;">
 {{ p.team }}
 </td>
 </tr>
 {% endfor %}
 
 </table>
-
-<br>
-<a href="{{ url_for('admin_logout') }}">Logout</a>
 
 </body>
 </html>
