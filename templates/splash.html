@@ -29,12 +29,25 @@ right:10px;
 font-size:0.8rem;
 opacity:0.7;
 }
+
+body {
+    transition: opacity 1s ease;
+}
+
+.fade-out {
+    opacity: 0;
+}
 </style>
 
 <script>
 setTimeout(function(){
-    window.location.href = "/register";
-}, 5000);
+    document.body.classList.add("fade-out");
+
+    setTimeout(function(){
+        window.location.href = "/register";
+    }, 1500); // wait for fade animation to finish
+
+}, 5000); // splash visible for 4 seconds
 </script>
 
 </head>
