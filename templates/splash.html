@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+background:linear-gradient(to bottom,#1e3c72,#2a5298);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+#logo{
+width:320px;
+max-width:70%;
+margin-bottom:20px;
+}
+#footer{
+position:absolute;
+bottom:10px;
+right:10px;
+font-size:0.8rem;
+opacity:0.7;
+}
+</style>
+
+<script>
+setTimeout(function(){
+    window.location.href = "/register";
+}, 5000);
+</script>
+
+</head>
+
+<body>
+
+<img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+<h1>Conferinta tineret BCB Maranata “Influente”</h1>
+
+<div id="footer">
+Programmed by David Andronic and Elias Chis
+</div>
+
+</body>
+</html>

@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-import os
 import re
 
 app = Flask(__name__)
@@ -60,9 +59,16 @@ def assign_team(church):
     return sorted_teams[0][0]
 
 # -----------------------
-# Homepage (Register)
+# Splash Page
 # -----------------------
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
+def splash():
+    return render_template("splash.html")
+
+# -----------------------
+# Registration Page
+# -----------------------
+@app.route("/register", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         name = request.form["name"].strip()
@@ -90,7 +96,6 @@ def index():
             flash("You are already registered. Please log in.")
             return redirect(url_for("login"))
 
-        # Assign team automatically
         assigned_team = assign_team(church)
 
         new_user = Participant(
