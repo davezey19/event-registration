@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+background:linear-gradient(to bottom,#1e3c72,#2a5298);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+font-family:Arial;
+}
+.container{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:12px;
+text-align:center;
+width:90%;
+max-width:400px;
+}
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border-radius:8px;
+border:none;
+background:#2a5298;
+color:white;
+cursor:pointer;
+}
+a{color:gold;}
+</style>
+</head>
+
+<body>
+
+<img src="{{ url_for('static', filename='logo.png') }}" width="200">
+
+<div class="container">
+
+<h2>Hello {{ user.name }}</h2>
+<p>Email: {{ user.email }}</p>
+<p>Phone: {{ user.phone }}</p>
+<p>Church: {{ user.church }}</p>
+
+<form method="POST" onsubmit="return confirmCancel();">
+<button type="submit">Cancel Registration</button>
+</form>
+
+<p><a href="{{ url_for('logout') }}">Logout</a></p>
+
+</div>
+
+<script>
+function confirmCancel() {
+    return confirm("Are you sure you want to cancel your registration? This cannot be undone.");
+}
+</script>
+
+</body>
+</html>

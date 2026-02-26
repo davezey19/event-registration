@@ -1,90 +1,196 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import re
 
 app = Flask(__name__)
-app.secret_key = "replace_with_a_random_secret_key"
+app.secret_key = "super_secret_key_change_this"
 
-# SQLite database
+# -----------------------
+# Database Config
+# -----------------------
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///participants.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# -----------------------
+# Teams (Admin Only Visible)
+# -----------------------
+TEAMS = {
+    "Red": "#e74c3c",
+    "Blue": "#3498db",
+    "Green": "#2ecc71",
+    "Yellow": "#f1c40f",
+    "Purple": "#9b59b6"
+}
 
-# Participant model
+# -----------------------
+# Admin Credentials
+# -----------------------
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin123"  # CHANGE THIS
+
+# -----------------------
+# Model
+# -----------------------
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(50))
     church = db.Column(db.String(100))
-    cancelled = db.Column(db.Boolean, default=False)
-    password_hash = db.Column(db.String(128), nullable=True)  # optional password
+    team = db.Column(db.String(20))  # Hidden from participants
 
-
-# Create database safely inside app context
+# Create database safely
 with app.app_context():
-    if not os.path.exists('participants.db'):
-        db.create_all()
+    db.create_all()
 
+# -----------------------
+# Team Assignment Logic
+# -----------------------
+def assign_team(church):
+    team_counts = {}
 
-# Splash + Registration
+    for team in TEAMS.keys():
+        church_count = Participant.query.filter_by(team=team, church=church).count()
+        total_count = Participant.query.filter_by(team=team).count()
+        team_counts[team] = (church_count, total_count)
+
+    sorted_teams = sorted(team_counts.items(), key=lambda x: (x[1][0], x[1][1]))
+    return sorted_teams[0][0]
+
+# -----------------------
+# Homepage (Register)
+# -----------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        church = request.form['church']
+        name = request.form["name"].strip()
+        email = request.form["email"].strip()
+        phone = request.form["phone"].strip()
+        church = request.form["church"]
 
-        # Check if participant already exists
-        participant = Participant.query.filter_by(email=email).first()
-        if participant:
-            flash("You already registered! Please log in to manage your registration.")
-            return redirect(url_for('login'))
+        # Email validation
+        email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        if not re.match(email_pattern, email):
+            flash("Please enter a valid email address.")
+            return redirect(url_for("index"))
 
-        # Add new participant
-        new_participant = Participant(name=name, email=email, phone=phone, church=church)
-        db.session.add(new_participant)
+        # Phone validation
+        if not phone.isdigit():
+            flash("Phone number must contain digits only.")
+            return redirect(url_for("index"))
+
+        if len(phone) != 11:
+            flash("Phone number must be exactly 11 digits.")
+            return redirect(url_for("index"))
+
+        existing = Participant.query.filter_by(email=email).first()
+        if existing:
+            flash("You are already registered. Please log in.")
+            return redirect(url_for("login"))
+
+        # Assign team automatically
+        assigned_team = assign_team(church)
+
+        new_user = Participant(
+            name=name,
+            email=email,
+            phone=phone,
+            church=church,
+            team=assigned_team
+        )
+
+        db.session.add(new_user)
         db.session.commit()
+
         return render_template("success.html", name=name)
 
-    # Sample churches for combo box
     churches = ["Church A", "Church B", "Church C", "Church D"]
     return render_template("index.html", churches=churches)
 
-
-# Participant login
+# -----------------------
+# User Login
+# -----------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form['email']
-        participant = Participant.query.filter_by(email=email).first()
-        if participant:
-            session['participant_id'] = participant.id
-            return redirect(url_for('cancel'))
+        email = request.form["email"]
+        user = Participant.query.filter_by(email=email).first()
+
+        if user:
+            session["user_id"] = user.id
+            return redirect(url_for("account"))
         else:
-            flash("Email not found. Please register first.")
+            flash("Email not found.")
+
     return render_template("login.html")
 
+# -----------------------
+# User Account
+# -----------------------
+@app.route("/account", methods=["GET", "POST"])
+def account():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
 
-# Cancel participation
-@app.route("/cancel", methods=["GET", "POST"])
-def cancel():
-    if 'participant_id' not in session:
-        return redirect(url_for('login'))
+    user = Participant.query.get(session["user_id"])
 
-    participant = Participant.query.get(session['participant_id'])
     if request.method == "POST":
-        participant.cancelled = True
+        db.session.delete(user)
         db.session.commit()
+        session.clear()
         flash("Your registration has been cancelled.")
-        session.pop('participant_id', None)
-        return redirect(url_for('index'))
-    return render_template("cancel.html", participant=participant)
+        return redirect(url_for("index"))
 
+    return render_template("account.html", user=user)
 
+# -----------------------
+# User Logout
+# -----------------------
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+# -----------------------
+# Admin Login
+# -----------------------
+@app.route("/admin-login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["admin"] = True
+            return redirect(url_for("admin_dashboard"))
+        else:
+            flash("Invalid admin credentials.")
+
+    return render_template("admin_login.html")
+
+# -----------------------
+# Admin Dashboard
+# -----------------------
+@app.route("/admin-dashboard")
+def admin_dashboard():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    participants = Participant.query.all()
+    return render_template("admin_dashboard.html", participants=participants, teams=TEAMS)
+
+# -----------------------
+# Admin Logout
+# -----------------------
+@app.route("/admin-logout")
+def admin_logout():
+    session.pop("admin", None)
+    return redirect(url_for("admin_login"))
+
+# -----------------------
+# Run App
+# -----------------------
 if __name__ == "__main__":
-    # Use host='0.0.0.0' for testing on mobile devices in local network
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0")

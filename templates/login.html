@@ -2,50 +2,43 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register</title>
+<title>Login</title>
 
 <style>
 body{
 margin:0;
-min-height:100vh;
+height:100vh;
 background:linear-gradient(to bottom,#1e3c72,#2a5298);
 display:flex;
 flex-direction:column;
+justify-content:center;
 align-items:center;
 color:white;
 font-family:Arial;
-padding:20px;
 }
 form{
 background:rgba(255,255,255,0.1);
 padding:25px;
 border-radius:12px;
-width:100%;
-max-width:400px;
 display:flex;
 flex-direction:column;
 align-items:center;
 }
-input,select,button{
-width:90%;
+input,button{
+width:250px;
 padding:12px;
 margin:10px 0;
 border-radius:8px;
 border:none;
 }
-button{
-background:#2a5298;
-color:white;
-cursor:pointer;
-}
-a{color:gold;}
+button{background:#2a5298;color:white;}
 </style>
 </head>
 
 <body>
 
 <img src="{{ url_for('static', filename='logo.png') }}" width="200">
-<h2>Register</h2>
+<h2>Login</h2>
 
 <!-- FLASH MESSAGES -->
 {% with messages = get_flashed_messages() %}
@@ -59,32 +52,9 @@ a{color:gold;}
 {% endwith %}
 
 <form method="POST">
-
-<input name="name" placeholder="Full Name" required>
-
-<input type="email" name="email" placeholder="Email" required>
-
-<input
-    name="phone"
-    placeholder="Phone (11 digits)"
-    pattern="\d{11}"
-    maxlength="11"
-    title="Phone number must be exactly 11 digits"
-    required>
-
-<select name="church">
-{% for church in churches %}
-<option value="{{ church }}">{{ church }}</option>
-{% endfor %}
-</select>
-
-<button type="submit">Register</button>
-
+<input type="email" name="email" placeholder="Enter your email" required>
+<button type="submit">Login</button>
 </form>
-
-<p>Already registered?
-   <a href="{{ url_for('login') }}">Log in here</a>
-</p>
 
 </body>
 </html>

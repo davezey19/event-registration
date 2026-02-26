@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<style>
+body{
+margin:0;
+background:linear-gradient(to bottom,#1e3c72,#2a5298);
+color:white;
+font-family:Arial;
+padding:20px;
+}
+table{
+width:100%;
+border-collapse:collapse;
+background:rgba(255,255,255,0.1);
+}
+th,td{
+padding:10px;
+border:1px solid rgba(255,255,255,0.3);
+text-align:left;
+}
+th{
+background:#2a5298;
+}
+a{color:gold;}
+</style>
+</head>
+
+<body>
+
+<h1>Registered Participants</h1>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Church</th>
+<th>Team</th>
+</tr>
+
+{% for p in participants %}
+<tr>
+<td>{{ p.name }}</td>
+<td>{{ p.email }}</td>
+<td>{{ p.phone }}</td>
+<td>{{ p.church }}</td>
+<td style="background-color: {{ teams[p.team] }}; color:white;">
+{{ p.team }}
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="{{ url_for('admin_logout') }}">Logout</a>
+
+</body>
+</html>
