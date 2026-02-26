@@ -77,14 +77,23 @@ tr:nth-child(even){
 background:rgba(255,255,255,0.05);
 }
 
+/* Delete Button */
+.delete-btn {
+background-color: #e74c3c;
+border: none;
+color: white;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+}
+
+.delete-btn:hover {
+background-color: #c0392b;
+}
+
 a{
 color:gold;
 text-decoration:none;
-}
-
-.logout{
-margin-top:20px;
-display:inline-block;
 }
 </style>
 </head>
@@ -110,6 +119,7 @@ display:inline-block;
 <th>Phone</th>
 <th>Church</th>
 <th>Team</th>
+<th>Actions</th>
 </tr>
 
 {% for p in participants %}
@@ -121,10 +131,23 @@ display:inline-block;
 <td style="background-color: {{ teams[p.team] }}; color:white; font-weight:bold;">
 {{ p.team }}
 </td>
+<td>
+<form method="POST"
+      action="{{ url_for('admin_remove', participant_id=p.id) }}"
+      onsubmit="return confirmRemove();">
+<button type="submit" class="delete-btn">Remove</button>
+</form>
+</td>
 </tr>
 {% endfor %}
 
 </table>
+
+<script>
+function confirmRemove() {
+    return confirm("Are you sure you want to remove this participant?");
+}
+</script>
 
 </body>
 </html>

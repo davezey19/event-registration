@@ -192,7 +192,20 @@ def admin_dashboard():
         teams=TEAMS,
         total_count=total_count
     )
+# -----------------------
+# Admin Remove Participant
+# -----------------------
+@app.route("/admin-remove/<int:participant_id>", methods=["POST"])
+def admin_remove(participant_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
 
+    participant = Participant.query.get_or_404(participant_id)
+    db.session.delete(participant)
+    db.session.commit()
+
+    flash("Participant removed successfully.")
+    return redirect(url_for("admin_dashboard"))
 # -----------------------
 # Admin Logout
 # -----------------------
