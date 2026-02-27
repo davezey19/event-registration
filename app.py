@@ -203,7 +203,9 @@ def admin_remove(participant_id):
     if "admin" not in session:
         return redirect(url_for("admin_login"))
 
-    participant = Participant.query.get_or_404(participant_id)
+    participant = db.session.get(Participant, participant_id)
+    if not participant:
+        return redirect(url_for("admin_dashboard"))
     db.session.delete(participant)
     db.session.commit()
 
