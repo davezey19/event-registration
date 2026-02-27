@@ -1,15 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import re
+import os
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key_change_this"
 
-# -----------------------
-# Database Config
-# -----------------------
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///participants.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Make sure instance folder exists
+if not os.path.exists(app.instance_path):
+    os.makedirs(app.instance_path)
+
+# Database path
+db_path = os.path.join(app.instance_path, "participants.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 db = SQLAlchemy(app)
 
 # -----------------------
