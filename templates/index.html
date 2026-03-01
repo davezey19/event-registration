@@ -26,7 +26,7 @@ display:flex;
 flex-direction:column;
 align-items:center;
 }
-input,select,button{
+input,select,textarea,button{
 width:90%;
 padding:12px;
 margin:10px 0;
@@ -44,34 +44,30 @@ a{color:gold;}
 
 <body>
 
-<img src="{{ url_for('static', filename='logo.png') }}" width="200">
 <h2>Register</h2>
 
-<!-- FLASH MESSAGES -->
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div style="color: yellow; margin-bottom: 15px; text-align:center;">
-      {% for message in messages %}
-        <p>{{ message }}</p>
-      {% endfor %}
-    </div>
-  {% endif %}
+{% if messages %}
+<div style="color:yellow;">
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}
+</div>
+{% endif %}
 {% endwith %}
 
 <form method="POST">
 
 <input name="name" placeholder="Full Name" required>
-
 <input type="email" name="email" placeholder="Email" required>
 
-<input
-    type="tel"
-    name="phone"
-    placeholder="Phone"
-    maxlength="11"
-    inputmode="numeric"
-    required
-    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+<input type="tel"
+       name="phone"
+       placeholder="Phone"
+       maxlength="11"
+       inputmode="numeric"
+       required
+       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
 <select name="church">
 {% for church in churches %}
@@ -79,13 +75,20 @@ a{color:gold;}
 {% endfor %}
 </select>
 
+<label style="font-size:14px;">
+Întrebări cu privire la tema întâlnirii „Influențe”?
+</label>
+
+<textarea name="question" rows="4"></textarea>
+
+<label style="font-size:14px;">
+<input type="checkbox" name="anonymous">
+ Trimite anonim
+</label>
+
 <button type="submit">Register</button>
 
 </form>
-
-<p>Already registered?
-   <a href="{{ url_for('login') }}">Log in here</a>
-</p>
 
 </body>
 </html>

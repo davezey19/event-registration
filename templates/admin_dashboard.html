@@ -58,6 +58,7 @@ border-collapse:collapse;
 background:rgba(255,255,255,0.1);
 border-radius:12px;
 overflow:hidden;
+margin-bottom:30px;
 }
 
 th,td{
@@ -105,6 +106,11 @@ a{
 color:gold;
 text-decoration:none;
 }
+
+.section-title{
+margin-top:40px;
+margin-bottom:15px;
+}
 </style>
 </head>
 
@@ -122,13 +128,16 @@ text-decoration:none;
     </div>
 </div>
 
+<!-- ================= PARTICIPANTS TABLE ================= -->
+
+<h2 class="section-title">Participanți</h2>
+
 <table>
 <tr>
 <th>Name</th>
 <th>Email</th>
 <th>Phone</th>
 <th>Church</th>
-<th>Team</th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
@@ -139,10 +148,6 @@ text-decoration:none;
 <td>{{ p.email }}</td>
 <td>{{ p.phone }}</td>
 <td>{{ p.church }}</td>
-
-<td style="background-color: {{ teams[p.team] }}; color:white; font-weight:bold;">
-{{ p.team }}
-</td>
 
 <td>
 {% if p.checked_in %}
@@ -176,8 +181,36 @@ Remove
 </td>
 </tr>
 {% endfor %}
+</table>
+
+
+<!-- ================= QUESTIONS SECTION ================= -->
+
+<h2 class="section-title">Întrebări primite</h2>
+
+<table>
+<tr>
+<th>Nume</th>
+<th>Întrebare</th>
+</tr>
+
+{% for p in participants %}
+{% if p.question %}
+<tr>
+<td>
+{% if p.anonymous %}
+Anonim
+{% else %}
+{{ p.name }}
+{% endif %}
+</td>
+<td>{{ p.question }}</td>
+</tr>
+{% endif %}
+{% endfor %}
 
 </table>
+
 
 <script>
 function confirmRemove() {
