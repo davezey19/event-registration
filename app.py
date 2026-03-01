@@ -12,7 +12,7 @@ if not os.path.exists(app.instance_path):
 
 # Database path
 db_path = os.path.join(app.instance_path, "participants.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/data/participants.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
