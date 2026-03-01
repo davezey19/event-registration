@@ -6,20 +6,21 @@ import os
 app = Flask(__name__)
 app.secret_key = "super_secret_key_change_this"
 
-# Make sure instance folder exists
-if not os.path.exists(app.instance_path):
-    os.makedirs(app.instance_path)
-
-# Database path
-db_path = os.path.join(app.instance_path, "participants.db")
-
+# -----------------------
+# Database Configuration
+# -----------------------
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///participants.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
+# Create tables safely on first request
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 # -----------------------
-# Teams (Admin Only Visible)
+# Teams
 # -----------------------
 TEAMS = {
     "Red": "#e74c3c",
@@ -44,16 +45,10 @@ class Participant(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(50))
     church = db.Column(db.String(100))
-    team = db.Column(db.String(20))  # Hidden from participants
+    team = db.Column(db.String(20))
     checked_in = db.Column(db.Boolean, default=False)
     question = db.Column(db.Text, nullable=True)
     anonymous = db.Column(db.Boolean, default=False)
-
-# Create database safely
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 
 # -----------------------
 # Team Assignment Logic
@@ -87,13 +82,11 @@ def index():
         phone = request.form["phone"].strip()
         church = request.form["church"]
 
-        # Email validation
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not re.match(email_pattern, email):
             flash("Please enter a valid email address.")
             return redirect(url_for("index"))
 
-        # Phone validation
         if not phone.isdigit():
             flash("Phone number must contain digits only.")
             return redirect(url_for("index"))
@@ -127,7 +120,14 @@ def index():
 
         return render_template("success.html", name=name)
 
-    churches = ["Biserica Maranata", "Biserica Connected Life", "Biserica Emaus", "Biserica Lui Hristos Leyton", "Other"]
+    churches = [
+        "Biserica Maranata",
+        "Biserica Connected Life",
+        "Biserica Emaus",
+        "Biserica Lui Hristos Leyton",
+        "Other"
+    ]
+
     return render_template("index.html", churches=churches)
 
 # -----------------------
@@ -208,8 +208,9 @@ def admin_dashboard():
         teams=TEAMS,
         total_count=total_count
     )
+
 # -----------------------
-# Admin Remove Participant
+# Admin Remove
 # -----------------------
 @app.route("/admin-remove/<int:participant_id>", methods=["POST"])
 def admin_remove(participant_id):
@@ -217,23 +218,15 @@ def admin_remove(participant_id):
         return redirect(url_for("admin_login"))
 
     participant = db.session.get(Participant, participant_id)
-    if not participant:
-        return redirect(url_for("admin_dashboard"))
-    db.session.delete(participant)
-    db.session.commit()
+    if participant:
+        db.session.delete(participant)
+        db.session.commit()
+        flash("Participant removed successfully.")
 
-    flash("Participant removed successfully.")
     return redirect(url_for("admin_dashboard"))
-# -----------------------
-# Admin Logout
-# -----------------------
-@app.route("/admin-logout")
-def admin_logout():
-    session.pop("admin", None)
-    return redirect(url_for("admin_login"))
 
 # -----------------------
-# Admin Check In Participant
+# Admin Check In
 # -----------------------
 @app.route("/admin-checkin/<int:participant_id>", methods=["POST"])
 def admin_checkin(participant_id):
@@ -248,13 +241,15 @@ def admin_checkin(participant_id):
     return redirect(url_for("admin_dashboard"))
 
 # -----------------------
-# Ensure Database Exists
+# Admin Logout
 # -----------------------
-with app.app_context():
-    db.create_all()
+@app.route("/admin-logout")
+def admin_logout():
+    session.pop("admin", None)
+    return redirect(url_for("admin_login"))
 
 # -----------------------
-# Run App (Local Only)
+# Run (Local Only)
 # -----------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
