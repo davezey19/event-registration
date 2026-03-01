@@ -37,6 +37,27 @@ body {
 .fade-out {
     opacity: 0;
 }
+
+.loader-container {
+    width: 250px;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.loader-bar {
+    height: 100%;
+    width: 0%;
+    background: white;
+    animation: loading 5s linear forwards;
+}
+
+@keyframes loading {
+    from { width: 0%; }
+    to { width: 100%; }
+}
 </style>
 
 <script>
@@ -56,7 +77,9 @@ setTimeout(function(){
 
 <img src="{{ url_for('static', filename='logo.png') }}" id="logo">
 <h1>Conferinta tineret BCB Maranata “Influente” - 14 Martie 2026</h1>
-
+<div class="loader-container">
+    <div class="loader-bar"></div>
+</div>
 <div id="footer">
 Programmed by David Andronic and Elias Chis
 </div>

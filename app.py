@@ -44,6 +44,7 @@ class Participant(db.Model):
     phone = db.Column(db.String(50))
     church = db.Column(db.String(100))
     team = db.Column(db.String(20))  # Hidden from participants
+    checked_in = db.Column(db.Boolean, default=False)
 
 # Create database safely
 def init_db():
@@ -119,7 +120,7 @@ def index():
 
         return render_template("success.html", name=name)
 
-    churches = ["Church A", "Church B", "Church C", "Church D"]
+    churches = ["Biserica Maranata", "Biserica Connected Life", "Biserica Emaus", "Biserica Lui Hristos Leyton", "Other"]
     return render_template("index.html", churches=churches)
 
 # -----------------------
@@ -223,6 +224,21 @@ def admin_remove(participant_id):
 def admin_logout():
     session.pop("admin", None)
     return redirect(url_for("admin_login"))
+
+# -----------------------
+# Admin Check In Participant
+# -----------------------
+@app.route("/admin-checkin/<int:participant_id>", methods=["POST"])
+def admin_checkin(participant_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    participant = Participant.query.get_or_404(participant_id)
+    participant.checked_in = True
+    db.session.commit()
+
+    flash("Participant checked in successfully.")
+    return redirect(url_for("admin_dashboard"))
 
 # -----------------------
 # Run App
