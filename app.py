@@ -58,7 +58,6 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-init_db()
 
 # -----------------------
 # Team Assignment Logic
@@ -256,4 +255,6 @@ def admin_checkin(participant_id):
 # Run App
 # -----------------------
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
