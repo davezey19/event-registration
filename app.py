@@ -14,10 +14,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-# Create tables safely on first request
-@app.before_first_request
-def create_tables():
-    db.create_all()
+
 
 # -----------------------
 # Teams
@@ -248,6 +245,8 @@ def admin_logout():
     session.pop("admin", None)
     return redirect(url_for("admin_login"))
 
+with app.app_context():
+    db.create_all()
 # -----------------------
 # Run (Local Only)
 # -----------------------
