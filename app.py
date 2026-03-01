@@ -12,12 +12,9 @@ if not os.path.exists(app.instance_path):
 
 # Database path
 db_path = os.path.join(app.instance_path, "participants.db")
-import os
 
-if os.environ.get("PORT"):
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/data/participants.db"
-else:
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///participants.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///participants.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -53,9 +50,9 @@ class Participant(db.Model):
     anonymous = db.Column(db.Boolean, default=False)
 
 # Create database safely
-def init_db():
-    with app.app_context():
-        db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 # -----------------------
