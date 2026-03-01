@@ -49,6 +49,13 @@ a{color:gold;}
 <p>Phone: {{ user.phone }}</p>
 <p>Church: {{ user.church }}</p>
 
+    {% if user.question %}
+<div style="margin-top:20px; background:rgba(255,255,255,0.1); padding:15px; border-radius:10px;">
+    <h3>Your question:</h3>
+    <p>{{ user.question }}</p>
+</div>
+{% endif %}
+
 <form method="POST" onsubmit="return confirmCancel();">
 <button type="submit">Cancel Registration</button>
 </form>

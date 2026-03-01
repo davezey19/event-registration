@@ -12,7 +12,12 @@ if not os.path.exists(app.instance_path):
 
 # Database path
 db_path = os.path.join(app.instance_path, "participants.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/data/participants.db"
+import os
+
+if os.environ.get("RENDER"):
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/data/participants.db"
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///participants.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -45,6 +50,8 @@ class Participant(db.Model):
     church = db.Column(db.String(100))
     team = db.Column(db.String(20))  # Hidden from participants
     checked_in = db.Column(db.Boolean, default=False)
+    question = db.Column(db.Text, nullable=True)
+    anonymous = db.Column(db.Boolean, default=False)
 
 # Create database safely
 def init_db():
@@ -107,12 +114,17 @@ def index():
 
         assigned_team = assign_team(church)
 
+        question = request.form.get("question")
+        anonymous = True if request.form.get("anonymous") else False
+
         new_user = Participant(
             name=name,
             email=email,
             phone=phone,
             church=church,
-            team=assigned_team
+            team=assigned_team,
+            question=question,
+            anonymous=anonymous
         )
 
         db.session.add(new_user)
@@ -243,3 +255,5 @@ def admin_checkin(participant_id):
 # -----------------------
 # Run App
 # -----------------------
+if __name__ == "__main__":
+    app.run(debug=True)
