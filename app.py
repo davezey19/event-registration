@@ -45,8 +45,6 @@ class Participant(db.Model):
     church = db.Column(db.String(100))
     team = db.Column(db.String(20))  # Hidden from participants
     checked_in = db.Column(db.Boolean, default=False)
-    question = db.Column(db.Text, nullable=True)
-    anonymous = db.Column(db.Boolean, default=False)
 
 # Create database safely
 def init_db():
