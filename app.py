@@ -14,11 +14,10 @@ if not os.path.exists(app.instance_path):
 db_path = os.path.join(app.instance_path, "participants.db")
 import os
 
-if os.environ.get("RENDER"):
+if os.environ.get("PORT"):
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////var/data/participants.db"
 else:
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///participants.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -261,4 +260,4 @@ with app.app_context():
 # Run App (Local Only)
 # -----------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
