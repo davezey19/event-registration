@@ -111,6 +111,17 @@ text-decoration:none;
 margin-top:40px;
 margin-bottom:15px;
 }
+
+    .wrap-text {
+    max-width: 350px;        /* controls width */
+    white-space: normal;     /* allows wrapping */
+    word-break: break-word;  /* breaks long words */
+    overflow-wrap: break-word;
+}
+
+table {
+    table-layout: fixed;     /* prevents table stretching */
+}
 </style>
 </head>
 
@@ -191,7 +202,7 @@ Remove
 <table>
 <tr>
 <th>Nume</th>
-<th>Întrebare</th>
+<th style="width:40%;">Întrebare</th>
 </tr>
 
 {% for p in participants %}
@@ -204,7 +215,7 @@ Anonymous
 {{ p.name }}
 {% endif %}
 </td>
-<td>{{ p.question }}</td>
+<td class="wrap-text">{{ p.question }}</td>
 </tr>
 {% endif %}
 {% endfor %}
