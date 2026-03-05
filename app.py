@@ -202,8 +202,8 @@ def admin_dashboard():
     return render_template(
         "admin_dashboard.html",
         participants=participants,
-        teams=TEAMS,
-        total_count=total_count
+        total_count=total_count,
+        teams=TEAMS
     )
 
 # -----------------------

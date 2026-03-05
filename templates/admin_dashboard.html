@@ -149,6 +149,7 @@ table {
 <th>Email</th>
 <th>Phone</th>
 <th>Church</th>
+<th>Team</th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
@@ -159,7 +160,17 @@ table {
 <td>{{ p.email }}</td>
 <td>{{ p.phone }}</td>
 <td>{{ p.church }}</td>
-
+<td>
+<span style="
+background: {{ teams[p.team] }};
+color:white;
+padding:4px 10px;
+border-radius:6px;
+font-weight:bold;
+">
+{{ p.team }}
+</span>
+</td>
 <td>
 {% if p.checked_in %}
 <span style="color:#2ecc71; font-weight:bold;">Checked In</span>
