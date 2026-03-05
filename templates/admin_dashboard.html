@@ -18,11 +18,6 @@ overflow-x:auto;
 width:100%;
 }
 
-/* Prevent text overlap */
-td, th {
-word-break: break-word;
-overflow-wrap: break-word;
-}
 .header{
 display:flex;
 justify-content:space-between;
@@ -121,16 +116,16 @@ text-decoration:none;
 margin-top:40px;
 margin-bottom:15px;
 }
-
-    .wrap-text {
-    max-width: 350px;        /* controls width */
-    white-space: normal;     /* allows wrapping */
-    word-break: break-word;  /* breaks long words */
-    overflow-wrap: break-word;
+td{
+max-width:220px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
 }
-
-table {
-    table-layout: fixed;     /* prevents table stretching */
+#searchInput{
+background:white;
+color:#333;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
 }
 </style>
 </head>
@@ -152,9 +147,24 @@ table {
 <!-- ================= PARTICIPANTS TABLE ================= -->
 
 <h2 class="section-title">Participanți</h2>
-
+<input
+type="text"
+id="searchInput"
+placeholder="Search name, email or church..."
+style="
+width:100%;
+max-width:400px;
+padding:12px;
+margin-bottom:15px;
+border-radius:8px;
+border:none;
+outline:none;
+font-size:14px;
+"
+>
 <div class="table-container">
-<table>
+<table id="participantsTable">
+
 <tr>
 <th>Name</th>
 <th>Email</th>
@@ -226,7 +236,7 @@ Remove
 <table>
 <tr>
 <th>Nume</th>
-<th style="width:40%;">Întrebare</th>
+<th style="width:55%;">Întrebare</th>
 </tr>
 
 {% for p in participants %}
@@ -253,6 +263,40 @@ function confirmRemove() {
     return confirm("Are you sure you want to remove this participant?");
 }
 </script>
+<script>
 
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("keyup", function() {
+
+    const filter = searchInput.value.toLowerCase();
+    const rows = document.querySelectorAll("#participantsTable tr");
+
+    rows.forEach((row, index) => {
+
+        if(index === 0) return; // skip header
+
+        const cells = row.getElementsByTagName("td");
+        if(cells.length === 0) return;
+
+        const name = cells[0].textContent.toLowerCase();
+        const email = cells[1].textContent.toLowerCase();
+        const church = cells[3].textContent.toLowerCase();
+
+        if (
+            name.includes(filter) ||
+            email.includes(filter) ||
+            church.includes(filter)
+        ) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+
+});
+
+</script>
 </body>
 </html>
