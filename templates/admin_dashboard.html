@@ -178,7 +178,7 @@ font-size:14px;
 {% for p in participants %}
 <tr>
 <td>{{ p.name }}</td>
-<td>{{ p.email }}</td>
+<td title="{{ p.email }}">{{ p.email }}</td>
 <td>{{ p.phone }}</td>
 <td>{{ p.church }}</td>
 <td>

@@ -51,7 +51,23 @@ a{color:gold;}
 
 <div style="margin-top:20px; background:rgba(255,255,255,0.1); padding:15px; border-radius:10px;">
 
-<h3>Ask or Edit Your Question</h3>
+{% if user.question %}
+
+<h3>Your question has been submitted ✔</h3>
+
+<p style="background:rgba(0,0,0,0.2); padding:10px; border-radius:6px;">
+{{ user.question }}
+</p>
+
+<p style="margin-top:10px; font-size:14px; opacity:0.9;">
+You can edit your question below if you want to change it.
+</p>
+
+{% else %}
+
+<h3>Ask a Question</h3>
+
+{% endif %}
 
 <form method="POST" action="{{ url_for('submit_question') }}">
 
@@ -69,12 +85,17 @@ Send anonymously
 
 <br><br>
 
-<button type="submit">Save Question</button>
+<button type="submit">
+{% if user.question %}
+Update Question
+{% else %}
+Send Question
+{% endif %}
+</button>
 
 </form>
 
 </div>
-
 <form method="POST" onsubmit="return confirmCancel();">
 <button type="submit">Cancel Registration</button>
 </form>
