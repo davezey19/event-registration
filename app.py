@@ -164,12 +164,13 @@ def account():
 @app.route("/submit-question", methods=["POST"])
 def submit_question():
 
-    if "participant_id" not in session:
+    if "user_id" not in session:
         return redirect(url_for("login"))
 
-    participant = Participant.query.get(session["participant_id"])
+    participant = Participant.query.get(session["user_id"])
 
     participant.question = request.form["question"]
+    participant.anonymous = True if request.form.get("anonymous") else False
 
     db.session.commit()
 

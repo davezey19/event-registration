@@ -12,7 +12,17 @@ color:white;
 font-family:Arial;
 padding:20px;
 }
+/* Make table scroll on small screens */
+.table-container{
+overflow-x:auto;
+width:100%;
+}
 
+/* Prevent text overlap */
+td, th {
+word-break: break-word;
+overflow-wrap: break-word;
+}
 .header{
 display:flex;
 justify-content:space-between;
@@ -143,6 +153,7 @@ table {
 
 <h2 class="section-title">Participanți</h2>
 
+<div class="table-container">
 <table>
 <tr>
 <th>Name</th>
@@ -204,12 +215,14 @@ Remove
 </tr>
 {% endfor %}
 </table>
+</div>
 
 
 <!-- ================= QUESTIONS SECTION ================= -->
 
 <h2 class="section-title">Întrebări primite</h2>
 
+<div class="table-container">
 <table>
 <tr>
 <th>Nume</th>
@@ -232,6 +245,7 @@ Anonymous
 {% endfor %}
 
 </table>
+</div>
 
 
 <script>
