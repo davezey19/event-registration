@@ -17,45 +17,110 @@ padding:20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
+flex-wrap:wrap;
 margin-bottom:20px;
+}
+
+.header h1{
+margin:0;
+}
+
+.stats-container{
+display:flex;
+justify-content:flex-end;
+margin-bottom:20px;
+}
+
+.stat-box{
+background:rgba(255,255,255,0.15);
+padding:15px 25px;
+border-radius:12px;
+text-align:center;
+min-width:180px;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+
+.stat-box h3{
+margin:0;
+font-size:16px;
+opacity:0.8;
+}
+
+.stat-box p{
+font-size:32px;
+margin:5px 0 0 0;
+font-weight:bold;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
 background:rgba(255,255,255,0.1);
+border-radius:12px;
+overflow:hidden;
+margin-bottom:30px;
 }
 
 th,td{
 padding:10px;
 border:1px solid rgba(255,255,255,0.3);
+text-align:left;
 }
 
 th{
 background:#2a5298;
 }
 
-.delete-btn{
-background:#e74c3c;
-border:none;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-cursor:pointer;
+tr:nth-child(even){
+background:rgba(255,255,255,0.05);
 }
 
-.checkin-btn{
-background:#2ecc71;
-border:none;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-cursor:pointer;
+.delete-btn {
+background-color: #e74c3c;
+border: none;
+color: white;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+}
+
+.delete-btn:hover {
+background-color: #c0392b;
+}
+
+.checkin-btn {
+background-color: #2ecc71;
+border: none;
+color: white;
+padding: 6px 12px;
+border-radius: 6px;
+cursor: pointer;
+margin-right:5px;
+}
+
+.checkin-btn:hover {
+background-color: #27ae60;
 }
 
 a{
 color:gold;
 text-decoration:none;
+}
+
+.section-title{
+margin-top:40px;
+margin-bottom:15px;
+}
+
+    .wrap-text {
+    max-width: 350px;        /* controls width */
+    white-space: normal;     /* allows wrapping */
+    word-break: break-word;  /* breaks long words */
+    overflow-wrap: break-word;
+}
+
+table {
+    table-layout: fixed;     /* prevents table stretching */
 }
 </style>
 </head>
@@ -67,53 +132,102 @@ text-decoration:none;
 <a href="{{ url_for('admin_logout') }}">Logout</a>
 </div>
 
+<div class="stats-container">
+    <div class="stat-box">
+        <h3>Total Participants</h3>
+        <p>{{ total_count }}</p>
+    </div>
+</div>
+
+<!-- ================= PARTICIPANTS TABLE ================= -->
+
+<h2 class="section-title">Participanți</h2>
+
 <table>
 <tr>
 <th>Name</th>
 <th>Email</th>
 <th>Phone</th>
 <th>Church</th>
-<th>Team</th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
 
 {% for p in participants %}
 <tr>
-
 <td>{{ p.name }}</td>
 <td>{{ p.email }}</td>
 <td>{{ p.phone }}</td>
 <td>{{ p.church }}</td>
 
-<td style="background-color: {{ teams[p.team] }}; color:white;">
-{{ p.team }}
-</td>
-
 <td>
 {% if p.checked_in %}
-Checked In
+<span style="color:#2ecc71; font-weight:bold;">Checked In</span>
 {% else %}
-Not Arrived
+<span style="color:#e74c3c;">Not Arrived</span>
 {% endif %}
 </td>
 
 <td>
 
-<form method="POST" action="{{ url_for('admin_checkin', participant_id=p.id) }}" style="display:inline;">
-<button type="submit" class="checkin-btn">Check In</button>
+{% if not p.checked_in %}
+<form method="POST"
+      action="{{ url_for('admin_checkin', participant_id=p.id) }}"
+      style="display:inline;">
+<button type="submit" class="checkin-btn">
+✓ Check In
+</button>
 </form>
+{% endif %}
 
-<form method="POST" action="{{ url_for('admin_remove', participant_id=p.id) }}" style="display:inline;">
-<button type="submit" class="delete-btn">Remove</button>
+<form method="POST"
+      action="{{ url_for('admin_remove', participant_id=p.id) }}"
+      onsubmit="return confirmRemove();"
+      style="display:inline;">
+<button type="submit" class="delete-btn">
+Remove
+</button>
 </form>
 
 </td>
-
 </tr>
+{% endfor %}
+</table>
+
+
+<!-- ================= QUESTIONS SECTION ================= -->
+
+<h2 class="section-title">Întrebări primite</h2>
+
+<table>
+<tr>
+<th>Nume</th>
+<th style="width:40%;">Întrebare</th>
+</tr>
+
+{% for p in participants %}
+{% if p.question %}
+<tr>
+<td>
+{% if p.anonymous %}
+Anonymous
+{% else %}
+{{ p.name }}
+{% endif %}
+</td>
+<td class="wrap-text">{{ p.question }}</td>
+</tr>
+{% endif %}
 {% endfor %}
 
 </table>
+
+
+<script>
+function confirmRemove() {
+    return confirm("Are you sure you want to remove this participant?");
+}
+</script>
 
 </body>
 </html>
