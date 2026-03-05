@@ -23,8 +23,7 @@ TEAMS = {
     "Red": "#e74c3c",
     "Blue": "#3498db",
     "Green": "#2ecc71",
-    "Yellow": "#f1c40f",
-    "Purple": "#9b59b6"
+    "Yellow": "#f1c40f"
 }
 
 # -----------------------
@@ -162,7 +161,21 @@ def account():
         return redirect(url_for("index"))
 
     return render_template("account.html", user=user)
+@app.route("/submit-question", methods=["POST"])
+def submit_question():
 
+    if "participant_id" not in session:
+        return redirect(url_for("login"))
+
+    participant = Participant.query.get(session["participant_id"])
+
+    participant.question = request.form["question"]
+
+    db.session.commit()
+
+    flash("Your question has been submitted!")
+
+    return redirect(url_for("account"))
 # -----------------------
 # User Logout
 # -----------------------
